@@ -36,6 +36,11 @@ resource "aws_iam_role_policy_attachment" "attach_logging_policy" {
   policy_arn = aws_iam_policy.api_gateway_policy.arn
 }
 
+resource "aws_api_gateway_account" "account_settings" {
+  cloudwatch_role_arn = aws_iam_role.api_gateway_role.arn
+}
+
+
 resource "aws_apigatewayv2_api" "websocket_api" {
   name                       = var.websocket_api_name
   protocol_type              = "WEBSOCKET"
