@@ -9,7 +9,12 @@ variable "route_selection_expression" {
   default     = "$request.body.action"
 }
 
-variable "custom_route_key" {
-  description = "Custom route key for the WebSocket API"
+variable "connect_lambda_arn" {
+  description = "ARN of the Lambda function to handle WebSocket connections"
+  type        = string
+}
+
+variable "aws_account_id" {
+  description = "The AWS account ID."
   type        = string
 }

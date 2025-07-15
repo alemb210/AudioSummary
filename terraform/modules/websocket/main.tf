@@ -1,3 +1,41 @@
+data "aws_region" "current" {}
+
+resource "aws_iam_role" "api_gateway_role" {
+  name = "WebSocketAPILoggingRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "api_gateway_policy" {
+  name        = "WebSocketAPILoggingPolicy"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["logs:*"],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_logging_policy" {
+  role       = aws_iam_role.api_gateway_role.name
+  policy_arn = aws_iam_policy.api_gateway_policy.arn
+}
+
 resource "aws_apigatewayv2_api" "websocket_api" {
   name                       = var.websocket_api_name
   protocol_type              = "WEBSOCKET"
@@ -7,25 +45,36 @@ resource "aws_apigatewayv2_api" "websocket_api" {
 resource "aws_apigatewayv2_stage" "stage" {
   api_id      = aws_apigatewayv2_api.websocket_api.id
   name        = "dev"
+  # Enable CloudWatch logging for the API Gateway stage
+  access_log_settings {
+    destination_arn = "arn:aws:logs:${data.aws_region.current.name}:${var.aws_account_id}:log-group:/aws/api-gateway/${aws_apigatewayv2_api.websocket_api.name}"
+    format          = jsonencode({
+      requestId       = "$context.requestId",
+      ip              = "$context.identity.sourceIp",
+      httpMethod      = "$context.httpMethod",
+      resourcePath    = "$context.resourcePath",
+      status          = "$context.status",
+      responseTime    = "$context.responseLatency",
+      userAgent       = "$context.identity.userAgent"
+    })
+  }
 }
 
 resource "aws_apigatewayv2_route" "connect" {
   api_id    = aws_apigatewayv2_api.websocket_api.id
   route_key = "$connect"
+  target    = "integrations/${aws_apigatewayv2_integration.connect_integration.id}"
 }
 
+resource "aws_apigatewayv2_integration" "connect_integration" {
+  api_id             = aws_apigatewayv2_api.websocket_api.id
+  integration_type   = "AWS_PROXY"
+  integration_uri    = var.connect_lambda_arn
+}
 resource "aws_apigatewayv2_route" "disconnect" {
   api_id    = aws_apigatewayv2_api.websocket_api.id
   route_key = "$disconnect"
 }
-
-#route for frontend to signal it is awaiting an analysis file
-resource "aws_apigatewayv2_route" "custom_route" {
-  api_id    = aws_apigatewayv2_api.websocket_api.id
-  route_key = var.custom_route_key
-} 
-
-
 
 # WebSocket Implementation for AudioSummary - Conceptual Overview
 # Architecture Overview

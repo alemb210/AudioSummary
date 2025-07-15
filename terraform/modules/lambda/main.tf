@@ -62,6 +62,8 @@ data "aws_iam_policy_document" "lambda_policy" {
 
 #Allow S3 to invoke the Lambda function
 #This is needed for the S3 bucket to trigger the Lambda function
+
+#We should abstract this later 
 resource "aws_lambda_permission" "allow_s3" {
   statement_id  = "AllowS3Invoke"
   action        = "lambda:InvokeFunction"

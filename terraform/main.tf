@@ -199,7 +199,8 @@ module "websocket" {
   source                     = "./modules/websocket"
   websocket_api_name         = "websocket-api"
   route_selection_expression = "$request.body.action"
-  custom_route_key           = "awaiting-file"
+  connect_lambda_arn = module.lambda_connect.lambda_function_arn
+  aws_account_id = "506007020488"
 }
 
 module "dynamo" {
@@ -225,6 +226,22 @@ module "dynamo" {
       projection_type = "ALL"
     }
   ]
+}
+
+module "lambda_connect" {
+  source                   = "./modules/lambda"
+  input_bucket_id          = module.upload_bucket.s3_bucket_id #unused
+  lambda_function_name     = "connect-integration"
+  lambda_handler           = "lambda.handler"
+  lambda_runtime           = "nodejs16.x"
+  lambda_role_name         = "websocket-connect-lambda-role"
+  lambda_policy_name       = "websocket-connect-lambda-policy"
+  lambda_source_file       = "modules/lambda/connect-integration/"
+  secret_arn               = module.secretsmanager.secret_arn
+  caller_bucket_arn        = module.upload_bucket.s3_bucket_arn #unused
+  output_bucket_id         = module.upload_bucket.s3_bucket_id  #unused
+  lambda_allowed_actions   = ["logs:*"]
+  lambda_allowed_resources = ["arn:aws:logs:*"]
 }
 
 
