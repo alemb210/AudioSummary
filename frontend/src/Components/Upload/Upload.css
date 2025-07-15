@@ -1,0 +1,19 @@
+.upload-card {
+    width: 50%; /* Increase width to take up more screen space */
+    max-width: none; /* Remove the maximum width restriction */
+    height: 10vh; /* Set a height relative to the viewport */
+    margin: 20px auto;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    color: black;
+}
+
+.upload-card:hover {
+    border-color: #007bff;
+    background-color: #f0f8ff;
+}
+
