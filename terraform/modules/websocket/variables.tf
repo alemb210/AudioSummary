@@ -14,7 +14,22 @@ variable "connect_lambda_arn" {
   type        = string
 }
 
+variable "disconnect_lambda_arn" {
+  description = "ARN of the Lambda function to handle WebSocket disconnections"
+  type        = string
+}
+
 variable "aws_account_id" {
   description = "The AWS account ID."
+  type        = string
+}
+
+variable "connect_lambda_name" {
+  description = "Name of the Lambda function for handling WebSocket connections"
+  type        = string
+}
+
+variable "disconnect_lambda_name" {
+  description = "Name of the Lambda function for handling WebSocket disconnections"
   type        = string
 }

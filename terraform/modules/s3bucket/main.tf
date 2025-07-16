@@ -3,6 +3,7 @@ resource "aws_s3_bucket" "bucket" {
   
 }
 
+#Declare an event that triggers a lambda function
 resource "aws_s3_bucket_notification" "bucket_event" {
   #Allow for the definition of no events (website bucket case)
   count = length(var.events_trigger_lambda) > 0 ? 1 : 0 

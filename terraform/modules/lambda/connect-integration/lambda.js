@@ -4,6 +4,7 @@ exports.handler = async (event) => {
     try {
         const connectionId = event.requestContext.connectionId;
         const fileId = event.queryStringParameters?.fileId; // Extract fileId from query string
+        console.log(`Connection established with ID: ${connectionId}, File ID: ${fileId}`);
         return {
             statusCode: 200,
             body: `Connection established with ID: ${connectionId}, File ID: ${fileId}`

@@ -200,6 +200,9 @@ module "websocket" {
   websocket_api_name         = "websocket-api"
   route_selection_expression = "$request.body.action"
   connect_lambda_arn = module.lambda_connect.lambda_function_arn
+  connect_lambda_name = module.lambda_connect.lambda_function_name
+  disconnect_lambda_arn = module.lambda_disconnect.lambda_function_arn
+  disconnect_lambda_name = module.lambda_disconnect.lambda_function_name
   aws_account_id = "506007020488"
 }
 
@@ -237,6 +240,22 @@ module "lambda_connect" {
   lambda_role_name         = "websocket-connect-lambda-role"
   lambda_policy_name       = "websocket-connect-lambda-policy"
   lambda_source_file       = "modules/lambda/connect-integration/"
+  secret_arn               = module.secretsmanager.secret_arn
+  caller_bucket_arn        = module.upload_bucket.s3_bucket_arn #unused
+  output_bucket_id         = module.upload_bucket.s3_bucket_id  #unused
+  lambda_allowed_actions   = ["logs:*"]
+  lambda_allowed_resources = ["arn:aws:logs:*"]
+}
+
+module "lambda_disconnect" {
+  source                   = "./modules/lambda"
+  input_bucket_id          = module.upload_bucket.s3_bucket_id #unused
+  lambda_function_name     = "disconnect-integration"
+  lambda_handler           = "lambda.handler"
+  lambda_runtime           = "nodejs16.x"
+  lambda_role_name         = "websocket-disconnect-lambda-role"
+  lambda_policy_name       = "websocket-disconnect-lambda-policy"
+  lambda_source_file       = "modules/lambda/disconnect-integration/"
   secret_arn               = module.secretsmanager.secret_arn
   caller_bucket_arn        = module.upload_bucket.s3_bucket_arn #unused
   output_bucket_id         = module.upload_bucket.s3_bucket_id  #unused
