@@ -70,3 +70,9 @@ variable "lambda_timeout" {
   type        = number
   default     = 3
 }
+
+variable "dynamodb_table_name" {
+  description = "The name of the DynamoDB table to store WebSocket connections."
+  type        = string
+  default     = "websocket-connections"
+}

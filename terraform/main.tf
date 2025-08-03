@@ -199,52 +199,42 @@ module "websocket" {
   source                     = "./modules/websocket"
   websocket_api_name         = "websocket-api"
   route_selection_expression = "$request.body.action"
-  connect_lambda_arn = module.lambda_connect.lambda_function_arn
-  connect_lambda_name = module.lambda_connect.lambda_function_name
-  disconnect_lambda_arn = module.lambda_disconnect.lambda_function_arn
-  disconnect_lambda_name = module.lambda_disconnect.lambda_function_name
-  aws_account_id = "506007020488"
+  connect_lambda_arn         = module.lambda_connect.lambda_function_arn
+  connect_lambda_name        = module.lambda_connect.lambda_function_name
+  disconnect_lambda_arn      = module.lambda_disconnect.lambda_function_arn
+  disconnect_lambda_name     = module.lambda_disconnect.lambda_function_name
+  aws_account_id             = "506007020488"
 }
 
 module "dynamo" {
   source       = "./modules/dynamo"
   table_name   = "websocket-connections"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "connectionId"
+  hash_key     = "fileId"
   attributes = [
     {
-      name = "connectionId"
-      type = "S"
-    },
-    {
-      name = "fileId"
-      type = "S"
-    }
-  ]
-
-  global_secondary_indices = [
-    {
-      name            = "FileIdIndex"
-      hash_key        = "fileId"
-      projection_type = "ALL"
-    }
+    name = "fileId"
+    type = "S" # String
+    } 
   ]
 }
 
+
 module "lambda_connect" {
-  source                   = "./modules/lambda"
-  input_bucket_id          = module.upload_bucket.s3_bucket_id #unused
-  lambda_function_name     = "connect-integration"
-  lambda_handler           = "lambda.handler"
-  lambda_runtime           = "nodejs16.x"
-  lambda_role_name         = "websocket-connect-lambda-role"
-  lambda_policy_name       = "websocket-connect-lambda-policy"
-  lambda_source_file       = "modules/lambda/connect-integration/"
-  secret_arn               = module.secretsmanager.secret_arn
-  caller_bucket_arn        = module.upload_bucket.s3_bucket_arn #unused
-  output_bucket_id         = module.upload_bucket.s3_bucket_id  #unused
-  lambda_allowed_actions   = ["logs:*"]
-  lambda_allowed_resources = ["arn:aws:logs:*"]
+  source               = "./modules/lambda"
+  input_bucket_id      = module.upload_bucket.s3_bucket_id #unused
+  lambda_function_name = "connect-integration"
+  lambda_handler       = "lambda.handler"
+  lambda_runtime       = "nodejs16.x"
+  lambda_role_name     = "websocket-connect-lambda-role"
+  lambda_policy_name   = "websocket-connect-lambda-policy"
+  lambda_source_file   = "modules/lambda/connect-integration/"
+  secret_arn           = module.secretsmanager.secret_arn
+  caller_bucket_arn    = module.upload_bucket.s3_bucket_arn #unused
+  output_bucket_id     = module.upload_bucket.s3_bucket_id  #unused
+  lambda_allowed_actions = ["dynamodb:PutItem"]
+  lambda_allowed_resources = [module.dynamo.dynamodb_table_arn]
+  dynamodb_table_name = module.dynamo.dynamodb_table_name 
 }
 
 module "lambda_disconnect" {
@@ -263,15 +253,3 @@ module "lambda_disconnect" {
   lambda_allowed_resources = ["arn:aws:logs:*"]
 }
 
-
-
-//Next steps: Define a s3 bucket module
-//Deploy s3 buckets Upload Bucket and Transcription Bucket
-//Modify the API gateway to PUT into the s3 bucket (Upload Bucket)
-//Create an event rule to trigger the lambda function when a file is uploaded to the s3 bucket
-//Code the Lambda - Transcriber function, which will call Amazon Transcribe
-//PUT the transcribed file into another s3 bucket (Transcription Bucket)
-//Create an event rule to trigger another lambda function when a file is uploaded to the transcriptions bucket
-//Code the Lambda - Analysis function, which will call Bedrock and generate a response
-//PUT the response into the Trancription Bucket
-//Call a Lambda to return the response to the user-facing website

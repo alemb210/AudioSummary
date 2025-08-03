@@ -91,6 +91,7 @@ resource "aws_apigatewayv2_integration" "connect_integration" {
   api_id           = aws_apigatewayv2_api.websocket_api.id
   integration_type = "AWS_PROXY"
   integration_uri  = var.connect_lambda_arn
+
 }
 
 resource "aws_apigatewayv2_route" "disconnect" {
@@ -118,7 +119,7 @@ resource "aws_apigatewayv2_deployment" "deployment" {
       aws_apigatewayv2_integration.connect_integration,
       aws_apigatewayv2_integration.disconnect_integration,
       aws_lambda_permission.connect_permission,
-      aws_lambda_permission.disconnect_permission
+      aws_lambda_permission.disconnect_permission,
     ]))
   }
 

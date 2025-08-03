@@ -59,7 +59,7 @@ exports.handler = async (event) => {
     console.log("AI Response:", responseBody);
 
 
-    // uploading Bedrock response to S3
+    // uploading Bedrock response to S3 //todo: make this an environment variable
     const outputBucket = "analysis-bucket-for-audio-test";
 
     // use original filename so frontend can identify the file

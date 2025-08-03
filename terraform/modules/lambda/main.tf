@@ -114,6 +114,7 @@ resource "aws_lambda_function" "function" {
     variables = {
       LANGUAGE_CODE = "en-US"                        # Specify the language code for transcription
       OUTPUT_BUCKET = var.output_bucket_id # Reference the output bucket
+      DYNAMODB_TABLE_NAME = var.dynamodb_table_name # Reference the DynamoDB table name
     }
   }
 }
