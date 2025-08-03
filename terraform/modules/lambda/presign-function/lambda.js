@@ -5,6 +5,7 @@ const apiGatewayManagementApi = new AWS.ApiGatewayManagementApi({
 });
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.DYNAMODB_TABLE_NAME;
+const path = require("path");
 
 
 exports.handler = async (event) => {
@@ -13,9 +14,8 @@ exports.handler = async (event) => {
         const eventRecord = event.Records && event.Records[0],
             inputBucket = eventRecord.s3.bucket.name,
             key = eventRecord.s3.object.key;
-            const fileId = path.basename(key);
-            
-            
+            const fileId = path.basename(key, path.extname(key)); //filename without extension
+
         //define parameters for generating presigned URL
         const params = {
             Bucket: inputBucket,
@@ -55,6 +55,8 @@ exports.handler = async (event) => {
 //Helper functions for communicating with WebSocket and DynamoDB
 async function sendURL(connectionId, url) {
     try {
+        console.log("connection id: ", connectionId);
+        console.log("wss url: ", apiGatewayManagementApi.endpoint);
         await apiGatewayManagementApi.postToConnection({
             ConnectionId: connectionId,
             Data: JSON.stringify({ url })

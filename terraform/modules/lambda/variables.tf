@@ -76,3 +76,9 @@ variable "dynamodb_table_name" {
   type        = string
   default     = "websocket-connections"
 }
+
+variable "websocket_api_endpoint" {
+  description = "The endpoint of the WebSocket API."
+  type        = string
+  default     = "wss://40nrw5iine.execute-api.us-east-1.amazonaws.com/dev"
+}
