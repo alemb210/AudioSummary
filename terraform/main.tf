@@ -1,3 +1,6 @@
+data "aws_caller_identity" "current" {} //used for dynamic ARN generation
+data "aws_region" "current" {}
+
 module "vpc" {
   source = "./modules/vpc"
 }
@@ -56,14 +59,17 @@ module "lambda_presign" {
   secret_arn             = module.secretsmanager.secret_arn
   caller_bucket_arn      = module.analysis_bucket.s3_bucket_arn #The arn of the bucket that invokes the Lambda
   output_bucket_id       = module.analysis_bucket.s3_bucket_id  #The id of the bucket the lambda will write to
-  lambda_allowed_actions = ["s3:GetObject", "dynamodb:GetItem"]
+  lambda_allowed_actions = ["s3:GetObject", "dynamodb:GetItem", "execute-api:ManageConnections"]
   lambda_allowed_resources = [
     "arn:aws:s3:::${module.analysis_bucket.s3_bucket_id}/*",
-    module.dynamo.dynamodb_table_arn
+    module.dynamo.dynamodb_table_arn,
+    "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${module.websocket.websocket_api_id}/*/@connections/*"
+
   ]
   dynamodb_table_name = module.dynamo.dynamodb_table_name 
-  websocket_api_endpoint = "wss://40nrw5iine.execute-api.us-east-1.amazonaws.com/dev/"
-}
+  websocket_api_endpoint = "https://40nrw5iine.execute-api.us-east-1.amazonaws.com/dev"
+  
+  }
 
 
 module "secretsmanager" {
