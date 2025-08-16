@@ -195,6 +195,8 @@ module "s3_cloudfront" {
   min_ttl                        = 0
   default_ttl                    = 3600 #one day
   max_ttl                        = 86400 #one year
+  aliases            = ["mrmeeting.net", "www.mrmeeting.net"]
+  acm_certificate_arn = module.acm.certificate_arn
 }
 
 module "gateway" {
@@ -260,5 +262,20 @@ module "lambda_disconnect" {
   output_bucket_id         = module.upload_bucket.s3_bucket_id  #unused
   lambda_allowed_actions   = ["logs:*"]
   lambda_allowed_resources = ["arn:aws:logs:*"]
+}
+
+module "route53" {
+  source       = "./modules/route53"
+  domain_name  = "mrmeeting.net" 
+  aliases            = ["mrmeeting.net", "www.mrmeeting.net"]
+  cloudfront_domain_name = module.s3_cloudfront.domain_name
+  cloudfront_hosted_zone_id = module.s3_cloudfront.hosted_zone_id
+}
+
+module "acm" {
+  source      = "./modules/acm"
+  domain_name = "mrmeeting.net" 
+  sans        = ["www.mrmeeting.net"]
+  zone_id     = module.route53.zone_id
 }
 

@@ -56,3 +56,15 @@ variable "max_ttl" {
   type        = number
   default     = 31536000 #one year
 }
+
+variable "aliases" {
+  description = "CNAMES for the distribution (ex: example.com, www.example.com)"
+  type        = list(string)
+  default     = []
+}
+
+variable "acm_certificate_arn" {
+  description = "ACM certificate ARN for HTTPS on custom domain"
+  type        = string
+  default     = null
+}

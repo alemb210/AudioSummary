@@ -9,6 +9,8 @@ resource "aws_cloudfront_distribution" "cdn" {
   enabled             = true
   default_root_object = var.default_root_object
 
+  aliases = var.aliases
+
   origin {
     domain_name              = var.s3_bucket_regional_domain_name
     origin_id                = "S3-${var.s3_bucket_name}"
@@ -32,7 +34,6 @@ resource "aws_cloudfront_distribution" "cdn" {
         forward = "none"
       }
     }
-
   }
 
 
@@ -44,8 +45,11 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
   }
 
-  #Hardcode as default for now, required configuration
+  #ACM certificate for custom domain
   viewer_certificate {
-    cloudfront_default_certificate = true
+    cloudfront_default_certificate = false
+    acm_certificate_arn            = var.acm_certificate_arn
+    ssl_support_method             = "sni-only"
+    minimum_protocol_version       = "TLSv1.2_2021"
   }
 }
