@@ -8,7 +8,7 @@ function App() {
       <header className="App-header">
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
         <p>
-          Upload an audio file to be summarized.
+          Upload an audio file to be summarized!
         </p>
         <Upload />
       </header>
