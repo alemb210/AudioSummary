@@ -1,8 +1,6 @@
 pipeline {
   agent any
-
-  tools {nodejs "nodejs"}
-
+  
   environment {
     CF_DIST_ID = credentials('cf-dist-id')
   }
