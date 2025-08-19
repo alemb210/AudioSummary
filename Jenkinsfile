@@ -1,6 +1,7 @@
 pipeline {
   agent any
   tools { nodejs 'nodejs' }
+
   environment {
     CF_DIST_ID = credentials('cf-dist-id')
   }
@@ -15,7 +16,7 @@ pipeline {
     stage('Install') {
       steps {
         dir('frontend') {
-          sh 'npm install'
+          sh 'npm ci'
         }
       }
     }
