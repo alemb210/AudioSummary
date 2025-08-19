@@ -18,7 +18,7 @@ pipeline {
     stage('Install') {
       steps {
         dir('frontend') {
-          sh 'npm install'
+          sh '/usr/bin/npm install'
         }
       }
     }
@@ -26,7 +26,7 @@ pipeline {
     stage('Build') {
       steps {
         dir('frontend') {
-          sh 'npm run build'
+          sh '/usr/bin/npm run build'
         }
       }
     }
