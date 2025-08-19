@@ -198,7 +198,7 @@ resource "aws_api_gateway_integration_response" "integration_response" {
     "method.response.header.Content-Type" = "'application/json'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'PUT,OPTIONS'"
-    "method.response.header.Access-Control-Allow-Origin"  = "'https://d3r6m9db3kpdda.cloudfront.net'"  
+    "method.response.header.Access-Control-Allow-Origin"  = "'https://mrmeeting.net'"  
   }
 
   response_templates = {
@@ -261,6 +261,6 @@ resource "aws_api_gateway_integration_response" "options_response" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'PUT,OPTIONS'"
-    "method.response.header.Access-Control-Allow-Origin"  = "'https://d3r6m9db3kpdda.cloudfront.net'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'https://mrmeeting.net'"
   }
 }

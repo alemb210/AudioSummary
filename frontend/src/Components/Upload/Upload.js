@@ -2,43 +2,20 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import Button from '../Button/Button';
 import './Upload.css';
-
 import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
+import Download from '../Download/Download';
 
 function Upload() {
     const [files, setFiles] = useState([]);
+    const [uploadedFileId, setUploadedFileId] = useState(null); //track state of uploaded file
 
     const generateFilename = (file) => {
         let timestamp = Date.now();
         let extension = file.name.split('.').pop();
         let name = file.name.split('.').slice(0, -1).join('.');
-        return `${name}_${timestamp}.${extension}`;
+        return {filenameNoExt:`${name}_${timestamp}`, filename: `${name}_${timestamp}.${extension}`};
     }
-
-    // return (
-    //     <div className="upload-card">
-    //         <FilePond 
-    //             files={files}
-    //             onupdatefiles={setFiles}
-    //             allowMultiple={false}
-    //             filename = {generateFilename}
-    //             server={{
-    //                 url: 'https://h820u2bos4.execute-api.us-east-1.amazonaws.com/dev/{filename}', // API Gateway invoke URL
-    //                 process: {
-    //                     method: 'PUT',
-    //                     headers: {
-    //                         'Content-Type': 'multipart/form-data',
-    //                     },
-    //                     withCredentials: false,
-    //                 },
-    //             }}
-    //             name="file"
-    //             labelIdle='Drag & Drop your file or <span class="filepond--label-action">Browse</span>'
-    //         />
-    //     </div>
-    // );
-
 
     return (
         <div className="upload-card">
@@ -48,7 +25,7 @@ function Upload() {
                 allowMultiple={false}
                 server={{
                     process: (fieldName, file, metadata, load, error, progress, abort) => {
-                        const filename = generateFilename(file);
+                        const {filenameNoExt, filename} = generateFilename(file);
                         const url = `https://h820u2bos4.execute-api.us-east-1.amazonaws.com/dev/${filename}`;
 
                         const formData = new FormData();
@@ -64,6 +41,7 @@ function Upload() {
                             .then(response => {
                                 if (response.ok) {
                                     load(response.text());
+                                    setUploadedFileId(filenameNoExt); //update state to render download component
                                 } else {
                                     error('Upload failed');
                                 }
@@ -76,6 +54,7 @@ function Upload() {
                 name="file"
                 labelIdle='Drag & Drop your file or <span class="filepond--label-action">Browse</span>'
             />
+            {uploadedFileId && <Download fileId={uploadedFileId} />}
         </div>
     );
 }

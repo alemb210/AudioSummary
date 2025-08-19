@@ -1,4 +1,4 @@
-data "aws_caller_identity" "current" {} //used for dynamic ARN generation
+data "aws_caller_identity" "current" {} //used for dynamic ARN generation and programatic account id retrieval
 data "aws_region" "current" {}
 
 module "vpc" {
@@ -202,7 +202,7 @@ module "s3_cloudfront" {
 module "gateway" {
   source         = "./modules/gateway"
   endpoint_path  = "upload"
-  aws_account_id = "506007020488"
+  aws_account_id = data.aws_caller_identity.current.account_id
   s3_bucket_name = "upload-bucket-for-audio-test"
 }
 
@@ -214,7 +214,7 @@ module "websocket" {
   connect_lambda_name        = module.lambda_connect.lambda_function_name
   disconnect_lambda_arn      = module.lambda_disconnect.lambda_function_arn
   disconnect_lambda_name     = module.lambda_disconnect.lambda_function_name
-  aws_account_id             = "506007020488"
+  aws_account_id = data.aws_caller_identity.current.account_id
 }
 
 module "dynamo" {
@@ -277,5 +277,12 @@ module "acm" {
   domain_name = "mrmeeting.net" 
   sans        = ["www.mrmeeting.net"]
   zone_id     = module.route53.zone_id
+}
+
+module "jenkins" {
+  source = "./modules/jenkins"
+  user_name = "jenkins-user"
+  s3_bucket_name = module.website_bucket.s3_bucket_id
+  cloudfront_distribution_arn = module.s3_cloudfront.cloudfront_distribution_arn
 }
 
