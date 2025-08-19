@@ -1,5 +1,5 @@
 pipeline {
-  agent { dockerContainer { image 'node:20-alpine' } }
+  agent any
 
   environment {
     CF_DIST_ID = credentials('cf-dist-id')
