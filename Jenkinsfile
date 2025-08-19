@@ -1,6 +1,6 @@
 pipeline {
-  agent any
-  
+  agent { docker { image 'node:20-alpine' } }
+
   environment {
     CF_DIST_ID = credentials('cf-dist-id')
   }
@@ -8,15 +8,14 @@ pipeline {
   stages {
     stage('Checkout Source') {
       steps {
-        git branch: "main",
-            url: 'git@github.com:alemb210/AudioSummary.git'
+        checkout scm
       }
     }
 
     stage('Install') {
       steps {
         dir('frontend') {
-          sh '/usr/bin/npm install'
+          sh 'npm install'
         }
       }
     }
@@ -24,7 +23,7 @@ pipeline {
     stage('Build') {
       steps {
         dir('frontend') {
-          sh '/usr/bin/npm run build'
+          sh 'npm run build'
         }
       }
     }
