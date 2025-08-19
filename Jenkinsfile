@@ -40,7 +40,6 @@ pipeline {
               includePathPattern: '**/*'
             )
             // force update of files
-            // Adding a test line to test webhook push
             cfInvalidate(distribution: env.CF_DIST_ID, paths: ['/*'])
           }
         }
