@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import './Download.css';
 
 function Download({ fileId }) {
-    const [message, setMessage] = useState('');
+    const [url, setUrl] = useState('');
     const [websocket, setWebsocket] = useState(null);
 
     const connectWebSocket = () => {
@@ -13,7 +14,12 @@ function Download({ fileId }) {
 
         ws.onmessage = (event) => {
             console.log('Message: ', event.data);
-            setMessage(event.data);
+            try {
+                setUrl(JSON.parse(event.data).url);
+            }
+            catch (e) {
+                console.error('Error parsing message:', e);
+            }
         };
 
         ws.onclose = () => {
@@ -38,10 +44,14 @@ function Download({ fileId }) {
         };
     }, [fileId]); 
 
+    const openLink = () => {
+        if (url) {
+            window.open(url, '_blank');
+        }
+    }
+
     return (
-        <div>
-            {message && <p>Message from server: {message}</p>}
-        </div>
+            url && <button className="download-button" onClick={openLink}>Your transcription is ready!</button>
     );
 }
 

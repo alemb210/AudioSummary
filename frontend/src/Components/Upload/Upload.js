@@ -54,11 +54,8 @@ function Upload() {
                 name="file"
                 labelIdle='Drag & Drop your file or <span class="filepond--label-action">Browse</span>'
             />
-            {uploadedFileId && <Download fileId={uploadedFileId} />}
+            {uploadedFileId && <div className="download-card"><Download fileId={uploadedFileId} /></div>}
         </div>
     );
 }
-
-//Next: Add filetype validation and disable instant uploads (use button component instead)
-
 export default Upload;

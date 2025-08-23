@@ -5,7 +5,7 @@
     margin: 20px auto;
     border: 2px dashed #ccc;
     border-radius: 10px;
-    background-color: #f9f9f9;
+    background-color: #fffff2;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: border-color 0.3s ease, background-color 0.3s ease;
@@ -14,6 +14,19 @@
 
 .upload-card:hover {
     border-color: #007bff;
-    background-color: #f0f8ff;
 }
+
+.download-card{
+    display: flex;
+    justify-content: center;
+    margin-top: 5rem;
+  }
+
+.upload-card .filepond--root,
+.upload-card .filepond--panel-root,
+.upload-card .filepond--panel {
+  background-color: #fffff2;
+  border-radius: 10px;
+}
+
 
