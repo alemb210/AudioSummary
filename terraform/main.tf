@@ -84,6 +84,7 @@ module "upload_bucket" {
   lambda_permission_id  = module.lambda_transcriber.lambda_permission_allow_s3
   lambda_role_arn       = module.lambda_transcriber.lambda_role_arn
   events_trigger_lambda = ["s3:ObjectCreated:*"]
+  ttl_days = 1
   s3_bucket_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -106,6 +107,7 @@ module "transcription_bucket" {
   lambda_permission_id  = module.lambda_analysis.lambda_permission_allow_s3
   lambda_role_arn       = module.lambda_analysis.lambda_role_arn
   events_trigger_lambda = ["s3:ObjectCreated:*"]
+  ttl_days = 1
   s3_bucket_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -131,6 +133,7 @@ module "analysis_bucket" {
   lambda_permission_id  = module.lambda_presign.lambda_permission_allow_s3
   lambda_role_arn       = module.lambda_presign.lambda_role_arn
   events_trigger_lambda = ["s3:ObjectCreated:*"]
+  ttl_days = 1
   #events_trigger_lambda = [] #stub so we dont trigger the wrong lambda
   s3_bucket_policy = jsonencode({
     Version = "2012-10-17",
@@ -163,6 +166,7 @@ module "website_bucket" {
   lambda_permission_id  = module.lambda_transcriber.lambda_permission_allow_s3
   lambda_role_arn       = module.lambda_transcriber.lambda_role_arn
   events_trigger_lambda = []
+  ttl_days = 0
   s3_bucket_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

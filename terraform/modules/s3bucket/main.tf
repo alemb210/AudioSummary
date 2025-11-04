@@ -32,4 +32,23 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   ]
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "ttl" {
+  count  = var.ttl_days > 0 ? 1 : 0 #Only create ttl config if ttl_days > 0
+  bucket = aws_s3_bucket.bucket.id
+
+  rule {
+    id = "auto-delete-after-${var.ttl_days}-days"
+
+    filter {
+      prefix = ""
+    }
+
+    expiration {
+      days = var.ttl_days
+    }
+
+    status = "Enabled"
+  }
+}
+
 

@@ -27,3 +27,8 @@ variable "events_trigger_lambda" {
   description = "The S3 events that will trigger the Lambda function."
   type        = list(string)  
 }
+
+variable "ttl_days" {
+  type        = number
+  default     = 0
+}
