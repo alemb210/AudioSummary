@@ -27,10 +27,25 @@ exports.handler = async (event) => {
 
 
     // create prompt
-    const prompt = `Summarize the following meeting transcription and provide key points with timestamps. Please note timestamps are provided in seconds format and not converted into minutes. Please convert into hh:mm:ss (when necessary), and truncate decimals from seconds. \n\nTranscript:\n${transcription}\n\nSpoken segments:\n Segments:
-    ${segments.map(segment => `Transcript: "${segment.transcript}" (Start: ${segment.start_time}, End: ${segment.end_time})`).join("\n")}`;
+    const prompt = `Summarize the following meeting transcription and provide key points with timestamps.
 
-    console.log("Prompt:", prompt);
+    Instructions:
+    - Convert all timestamps from seconds to hh:mm:ss format
+    - Round timestamps to whole seconds (no decimals)
+    - Provide only the summary and key points
+    - Do not include any commentary or notes
+
+    Full Transcript:
+    ${transcription}
+
+    Timestamped Segments:
+    ${segments.map(segment => `[${segment.start_time}s - ${segment.end_time}s]: "${segment.transcript}"`).join("\n")}
+
+    Please provide:
+    1. A brief summary of the meeting
+    2. Key points with timestamps in hh:mm:ss format`;
+
+    //console.log("Prompt:", prompt);
 
     // define payload for Bedrock
     const payload = {
