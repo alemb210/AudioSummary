@@ -18,8 +18,8 @@ exports.handler = (event, context) => {
 
   console.log('converting from ', `https://${inputBucket}.s3.amazonaws.com/${key}`, extension);
 
-  if (!['mp3', 'mp4', 'wav', 'flac'].includes(extension)) {
-    throw 'Invalid file extension, the only supported AWS Transcribe file types are MP3, MP4, WAV, FLAC.';
+  if (!['mp3', 'mp4', 'wav', 'flac', 'amr', 'm4a', 'ogg', 'webm'].includes(extension)) {
+    throw 'Invalid file extension, the only supported AWS Transcribe file types are MP3, MP4, WAV, FLAC, AMR, M4A, OGG, WEBM.';
   }
 
   const fileUri = `https://${inputBucket}.s3.amazonaws.com/${key}`,
