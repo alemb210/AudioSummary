@@ -228,9 +228,20 @@ module "dynamo" {
   hash_key     = "fileId"
   attributes = [
     {
-    name = "fileId"
-    type = "S" # String
-    } 
+      name = "fileId"
+      type = "S"
+    },
+    {
+      name = "connectionId"
+      type = "S"
+    }
+  ]
+  global_secondary_indices = [
+    {
+      name            = "connectionId-index"
+      hash_key        = "connectionId"
+      projection_type = "ALL"
+    }
   ]
 }
 
@@ -264,8 +275,12 @@ module "lambda_disconnect" {
   secret_arn               = module.secretsmanager.secret_arn
   caller_bucket_arn        = module.upload_bucket.s3_bucket_arn #unused
   output_bucket_id         = module.upload_bucket.s3_bucket_id  #unused
-  lambda_allowed_actions   = ["logs:*"]
-  lambda_allowed_resources = ["arn:aws:logs:*"]
+  lambda_allowed_actions   = ["dynamodb:Query", "dynamodb:DeleteItem"]
+  lambda_allowed_resources = [
+    module.dynamo.dynamodb_table_arn,
+    "${module.dynamo.dynamodb_table_arn}/index/connectionId-index"
+  ]
+  dynamodb_table_name = module.dynamo.dynamodb_table_name
 }
 
 module "route53" {
