@@ -1,0 +1,16 @@
+{
+  "name": "disconnect-integration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lambda.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.1693.0",
+    "jest": "^27.5.1"
+  }
+}
