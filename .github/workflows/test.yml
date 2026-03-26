@@ -1,0 +1,26 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lambda-tests:
+    name: Lambda Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: terraform/modules/lambda/disconnect-integration/package-lock.json
+
+      - name: Install dependencies
+        working-directory: terraform/modules/lambda/disconnect-integration
+        run: npm ci
+
+      - name: Run tests
+        working-directory: terraform/modules/lambda/disconnect-integration
+        run: npm test
